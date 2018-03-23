@@ -1,3 +1,21 @@
+Spherical Kernel Density Estimation
+===================================
+
+These packages allow you to do rudimentary kernel density estimation on a
+sphere. Extreme alpha development status.
+
+The fundamental principle is to replace the traditional Gaussian function used
+in 
+[kernel density estimation](https://en.wikipedia.org/wiki/Kernel_density_estimation)
+with the
+[Von Mises-Fisher distribution](https://en.wikipedia.org/wiki/Von_Mises-Fisher_distribution).
+We then plot on a Mollweide projection, as this is equal area, and therefore
+has the least visual disturbance regarding PDF estimation.
+
+Example Usage
+-------------
+
+```python
 import numpy
 from spherical_kde.kde import SphericalKDE
 from spherical_kde.utils import polar_to_decra, decra_to_polar
@@ -32,3 +50,12 @@ kde_2.plot('b', ax=ax)
 
 # Save to plot
 fig.savefig('plot.png')
+
+```
+![](https://raw.github.com/williamjameshandley/spherical_kde/master/plot.png)
+
+To do
+-----
+* [ ] Bandwidth estimation
+* [ ] Other projections
+* [ ] Change centre of Mollweide projection
