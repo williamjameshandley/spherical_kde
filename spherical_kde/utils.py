@@ -7,13 +7,13 @@ def cartesian_from_spherical(phi, theta):
     return numpy.array([x, y, z])
 
 
-def decra_to_polar(dec, ra)
+def decra_to_polar(ra, dec):
     phi = numpy.mod(ra,2*numpy.pi)
     theta = numpy.pi/2-dec
     return phi, theta
 
 
-def polar_to_decra(phi, theta)
+def polar_to_decra(phi, theta):
     ra = phi * (phi<numpy.pi) +  (phi-2*numpy.pi)*(phi>numpy.pi)
     dec = numpy.pi/2-theta
     return ra, dec
