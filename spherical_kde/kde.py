@@ -6,7 +6,7 @@ from spherical_kde.distributions import VMF
 from spherical_kde.utils import polar_to_decra, decra_to_polar
 
 class SphericalKDE(object):
-    def __init__(self, phi_samples, theta_samples, bandwidth=0.2, weights=None):
+    def __init__(self, phi_samples, theta_samples, weights=None, bandwidth=0.2):
 
         if len(phi_samples) != len(theta_samples):
             raise ValueError("phi_samples must be the same"
@@ -18,6 +18,9 @@ class SphericalKDE(object):
         self.bandwidth = bandwidth
         if weights is None:
             self.weights = numpy.ones_like(theta_samples)
+        else:
+            self.weights = weights
+
         self.weights /= self.weights.sum()
 
         self.palefactor=0.6
@@ -60,3 +63,12 @@ class SphericalKDE(object):
         for _ in range(1, 2):
             cols = [[c * (1 - self.palefactor) + self.palefactor for c in cols[0]]] + cols
         return cols
+
+    def decra_samples(self):
+        weights = self.weights / self.weights.max()
+        i_ = weights > numpy.random.rand(len(weights))
+        phi = self.phi[i_]
+        theta = self.theta[i_]
+        ra, dec = polar_to_decra(phi, theta)
+        return ra, dec
+
