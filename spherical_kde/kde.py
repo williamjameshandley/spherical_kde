@@ -4,6 +4,8 @@ from scipy.special import logsumexp
 import numpy
 from spherical_kde.distributions import VMF
 from spherical_kde.utils import polar_to_decra, decra_to_polar
+import cartopy.crs as ccrs
+
 
 class SphericalKDE(object):
     def __init__(self, phi_samples, theta_samples, weights=None, bandwidth=0.2):
@@ -31,19 +33,14 @@ class SphericalKDE(object):
         return logsumexp(VMF(phi, theta, self.phi, self.theta, self.bandwidth),
                          axis=-1, b=self.weights)
 
-    def plot(self,colour='g', ax=None):
+    def plot(self, ax, colour='g'):
+        if not isinstance(ax.projection, ccrs.Projection):
+            raise TypeError("ax.projection must be of type ccrs.Projection "
+                            "({})".format(type(ax.projection)))
 
-        # Set up the figure if it's not provided
-        if ax is None:
-            fig = plt.figure()
-            ax = fig.add_subplot(111, projection='mollweide')
-            ax.grid(color='k', linestyle='--', linewidth=0.1)
-        else:
-            fig = ax.figure
-
-        # Compute the kernel density estimate of the probability
-        ra = numpy.linspace(-numpy.pi, numpy.pi, self.nphi)
-        dec = numpy.linspace(-numpy.pi/2, numpy.pi/2, self.ntheta)
+        # Compute the kernel density estimate of the probability on an equiangular grid
+        ra = numpy.linspace(-180, 180, self.nphi)
+        dec = numpy.linspace(-90, 90, self.ntheta)
         X, Y = numpy.meshgrid(ra, dec)
         phi, theta = decra_to_polar(X, Y)
         P = numpy.exp(self(phi, theta)) 
@@ -54,9 +51,9 @@ class SphericalKDE(object):
         cdf = self.weights[i].cumsum()
         levels = [Ps[i[numpy.argmin(cdf<f)]] for f in [0.05, 0.33]] + [numpy.inf]
 
-        ax.contourf(X, Y, P, levels=levels, colors=self.colours(colour))
-
-        return fig, ax
+        # Plot the countours on a suitable equiangular projection
+        ax.contourf(X, Y, P, levels=levels, colors=self.colours(colour), 
+                    transform=ccrs.PlateCarree())
 
     def colours(self, colour):
         cols = [matplotlib.colors.colorConverter.to_rgb(colour)]

@@ -1,34 +1,47 @@
 import numpy
 from spherical_kde.kde import SphericalKDE
-from spherical_kde.utils import polar_to_decra, decra_to_polar
+import matplotlib.pyplot as plt
+import cartopy.crs as ccrs
+from matplotlib.gridspec import GridSpec, GridSpecFromSubplotSpec
 
-# Generate some samples centered on (1,1)
+fig = plt.figure()
+gs_vert = GridSpec(2, 1)
+gs_lower = GridSpecFromSubplotSpec(1, 2, subplot_spec=gs_vert[1])
+ax_mollweide = fig.add_subplot(gs_vert[0], projection=ccrs.Mollweide())
+fig.add_subplot(gs_lower[0], projection=ccrs.Orthographic())
+fig.add_subplot(gs_lower[1], projection=ccrs.Orthographic(-10, 45))
+
 nsamples = 100
-theta_samples = numpy.random.normal(loc=1,scale=0.3,size=nsamples)
-phi_samples = numpy.random.normal(loc=1,scale=0.3,size=nsamples)
-phi_samples = numpy.mod(phi_samples,numpy.pi*2)
+pi = numpy.pi
 
-kde_0 = SphericalKDE(phi_samples, theta_samples)
+# Generate some samples centered on (1,1) +/- 0.3 radians
+theta_samples = numpy.random.normal(loc=1, scale=0.3, size=nsamples)
+phi_samples = numpy.random.normal(loc=1, scale=0.3, size=nsamples)
+phi_samples = numpy.mod(phi_samples, pi*2)
+kde_green = SphericalKDE(phi_samples, theta_samples)
 
-# Plot green contours
-fig, ax = kde_0.plot('g')
+# Generate some samples centered on (-1,1) +/- 0.3 radians
+theta_samples = numpy.random.normal(loc=1, scale=0.3, size=nsamples)
+phi_samples = numpy.random.normal(loc=-1, scale=0.3, size=nsamples)
+phi_samples = numpy.mod(phi_samples, pi*2)
+kde_red = SphericalKDE(phi_samples, theta_samples)
 
-# Plot the actual samples on top
-ra_samples, dec_samples = polar_to_decra(kde_0.phi, kde_0.theta)
-ax.plot(ra_samples, dec_samples, 'k.')
+# Generate a spread of samples along latitude -2, height 0.1
+theta_samples = numpy.random.normal(loc=2, scale=0.1, size=nsamples)
+phi_samples = numpy.random.uniform(low=-pi/2, high=pi/2, size=nsamples)
+phi_samples = numpy.mod(phi_samples, pi*2)
+kde_blue = SphericalKDE(phi_samples, theta_samples, bandwidth=0.1)
 
-# Generate some more samples and plot on the same axis in red
-phi_samples = numpy.random.normal(loc=-1,scale=0.3,size=nsamples)
-phi_samples = numpy.mod(phi_samples,numpy.pi*2)
-kde_1 = SphericalKDE(phi_samples, theta_samples)
-kde_1.plot('r', ax=ax)
+# extract the green sample points
+ra_samples, dec_samples = kde_green.decra_samples()
 
-
-# Generate different samples in blue
-theta_samples = numpy.random.normal(loc=2,scale=0.1,size=nsamples)
-phi_samples = numpy.random.rand(nsamples)*numpy.pi*2
-kde_2 = SphericalKDE(phi_samples, theta_samples)
-kde_2.plot('b', ax=ax)
+for ax in fig.axes:
+    ax.set_global()
+    ax.gridlines()
+    kde_green.plot(ax, 'g')
+    kde_red.plot(ax, 'r')
+    kde_blue.plot(ax, 'b')
+    ax.plot(ra_samples, dec_samples, 'k.', transform=ccrs.PlateCarree())
 
 # Save to plot
 fig.savefig('plot.png')
