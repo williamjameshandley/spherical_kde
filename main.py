@@ -1,15 +1,17 @@
 import numpy
-from spherical_kde.kde import SphericalKDE
+from spherical_kde import SphericalKDE
 import matplotlib.pyplot as plt
 import cartopy.crs as ccrs
 from matplotlib.gridspec import GridSpec, GridSpecFromSubplotSpec
 
-fig = plt.figure()
-gs_vert = GridSpec(2, 1)
+fig = plt.figure(figsize=(10,10))
+gs_vert = GridSpec(3, 1)
 gs_lower = GridSpecFromSubplotSpec(1, 2, subplot_spec=gs_vert[1])
-ax_mollweide = fig.add_subplot(gs_vert[0], projection=ccrs.Mollweide())
+
+fig.add_subplot(gs_vert[0], projection=ccrs.Mollweide())
 fig.add_subplot(gs_lower[0], projection=ccrs.Orthographic())
 fig.add_subplot(gs_lower[1], projection=ccrs.Orthographic(-10, 45))
+fig.add_subplot(gs_vert[2], projection=ccrs.PlateCarree())
 
 nsamples = 100
 pi = numpy.pi
@@ -32,16 +34,15 @@ phi_samples = numpy.random.uniform(low=-pi/2, high=pi/2, size=nsamples)
 phi_samples = numpy.mod(phi_samples, pi*2)
 kde_blue = SphericalKDE(phi_samples, theta_samples, bandwidth=0.1)
 
-# extract the green sample points
-ra_samples, dec_samples = kde_green.decra_samples()
-
 for ax in fig.axes:
     ax.set_global()
     ax.gridlines()
+    ax.coastlines(linewidth=0.1)
     kde_green.plot(ax, 'g')
+    kde_green.plot_decra_samples(ax)
     kde_red.plot(ax, 'r')
     kde_blue.plot(ax, 'b')
-    ax.plot(ra_samples, dec_samples, 'k.', transform=ccrs.PlateCarree())
 
 # Save to plot
+fig.tight_layout()
 fig.savefig('plot.png')
