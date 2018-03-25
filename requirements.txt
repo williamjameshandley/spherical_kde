@@ -1,0 +1,5 @@
+Cartopy
+scipy
+numpy
+matplotlib
+pypandoc

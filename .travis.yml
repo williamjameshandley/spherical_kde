@@ -1,3 +1,13 @@
 language: python
 python:
     - "3.6"
+before_install:
+  - sudo apt-get -qq update
+  - sudo apt-get install -y libproj-dev proj-bin proj-data
+  - sudo apt-get install -y python-pyproj
+  - sudo apt-get install -y libc6
+  - wget http://es.archive.ubuntu.com/ubuntu/pool/universe/p/proj/libproj9_4.9.2-2_amd64.deb 
+  - sudo dpkg -i libproj9_4.9.2-2_amd64.deb 
+  - wget http://es.archive.ubuntu.com/ubuntu/pool/universe/p/proj/libproj-dev_4.9.2-2_amd64.deb
+  - sudo dpkg -i libproj-dev_4.9.2-2_amd64.deb
+  - pip install cython
