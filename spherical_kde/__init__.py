@@ -1,7 +1,8 @@
 import matplotlib
 from scipy.special import logsumexp
 import numpy
-from spherical_kde.distributions import VonMisesFisherDistribution as VMF
+from spherical_kde.distributions import (VonMisesFisher_distribution as VMF,
+                                         VonMises_standarddeviation)
 from spherical_kde.utils import polar_to_decra, decra_to_polar
 import cartopy.crs as ccrs
 
@@ -36,7 +37,9 @@ class SphericalKDE(object):
             Sample weighting (normalised to sum to 1).
 
         bandwidth (float)
-            Bandwidth of the kde.
+            Bandwidth of the kde. defaults to rule-of-thumb estimator:
+            https://en.wikipedia.org/wiki/Kernel_density_estimation
+            Set to None to use this value
 
         density (int)
             number of gridpoints in each direction to evaluate KDE over sphere
@@ -45,7 +48,7 @@ class SphericalKDE(object):
             Getdist-style colouration factor of sigma-contours.
     """
     def __init__(self, phi_samples, theta_samples,
-                 weights=None, bandwidth=0.2, density=100):
+                 weights=None, bandwidth=None, density=100):
 
         self.phi = numpy.array(phi_samples)
         self.theta = numpy.array(theta_samples)
@@ -65,6 +68,20 @@ class SphericalKDE(object):
             raise ValueError("phi_samples must be the same"
                              "shape as weights ({}!={})".format(
                                  len(self.phi), len(self.weights)))
+
+        sigmahat = VonMises_standarddeviation(self.theta, self.phi)
+        self.suggested_bandwidth = 1.06*sigmahat*len(weights)**-0.2
+
+    @property
+    def bandwidth(self):
+        if self._bandwidth is None:
+            return self.suggested_bandwidth
+        else:
+            return self._bandwidth
+
+    @bandwidth.setter
+    def bandwidth(self, value):
+        self._bandwidth = value
 
     def __call__(self, phi, theta):
         """ Log-probability density estimate
@@ -87,7 +104,7 @@ class SphericalKDE(object):
 
         # Compute the kernel density estimate on an equiangular grid
         ra = numpy.linspace(-180, 180, self.density)
-        dec = numpy.linspace(-90, 90, self.density)
+        dec = numpy.linspace(-89, 89, self.density)
         X, Y = numpy.meshgrid(ra, dec)
         phi, theta = decra_to_polar(X, Y)
         P = numpy.exp(self(phi, theta))
@@ -122,5 +139,6 @@ class SphericalKDE(object):
     def _colours(self, colour):
         cols = [matplotlib.colors.colorConverter.to_rgb(colour)]
         for _ in range(1, 2):
-            cols = [[c * (1 - self.palefactor) + self.palefactor for c in cols[0]]] + cols
+            cols = [[c * (1 - self.palefactor) + self.palefactor
+                     for c in cols[0]]] + cols
         return cols

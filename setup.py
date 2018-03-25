@@ -8,7 +8,7 @@ except (IOError, ImportError):
     long_description = ''
 
 setup(name='spherical_kde',
-      version='0.0.2',
+      version='0.0.3',
       author='Will Handley',
       author_email='wh260@cam.ac.uk',
       url='https://github.com/williamjameshandley/spherical_kde',

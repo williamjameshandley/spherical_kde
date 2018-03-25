@@ -20,6 +20,26 @@ def cartesian_from_spherical(phi, theta):
     z = numpy.cos(theta)
     return numpy.array([x, y, z])
 
+def spherical_from_cartesian(x):
+    """ Embedded 3D unit vector from spherical polar coordinates.
+
+    Args:
+        phi (float or numpy.array)
+            azimuthal angle in radians
+
+        theta (float or numpy.array)
+            polar angle in radians
+
+    Returns:
+        nhat (numpy.array)
+            unit vector(s) in direction phi, theta
+    """
+    r = (x.dot(x))**0.5
+    x, y, z = x
+    theta = numpy.arccos(z / numpy.sqrt(x**2 + y**2))
+    phi = numpy.arctan2(y, x)
+    return phi, theta
+
 
 def decra_to_polar(ra, dec):
     """ Convert from spherical polar coordinates to ra and dec.
