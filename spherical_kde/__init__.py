@@ -103,13 +103,16 @@ class SphericalKDE(object):
         ax.contourf(X, Y, P, levels=levels, colors=self._colours(colour),
                     transform=ccrs.PlateCarree())
 
-    def plot_decra_samples(self, ax, color='k'):
+    def plot_decra_samples(self, ax, color='k', nsamples=None):
         """ Plot equally weighted samples on an axis. """
-        ra, dec = self._decra_samples()
+        ra, dec = self._decra_samples(nsamples)
         ax.plot(ra, dec, 'k.', transform=ccrs.PlateCarree())
 
-    def _decra_samples(self):
+    def _decra_samples(self, nsamples=None):
         weights = self.weights / self.weights.max()
+        if nsamples is not None:
+            weights /= weights.sum()
+            weights *= nsamples
         i_ = weights > numpy.random.rand(len(weights))
         phi = self.phi[i_]
         theta = self.theta[i_]
