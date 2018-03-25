@@ -14,6 +14,12 @@ Example Usage
 -------------
 
 ```python
+import numpy
+from spherical_kde import SphericalKDE
+import matplotlib.pyplot as plt
+import cartopy.crs as ccrs
+from matplotlib.gridspec import GridSpec, GridSpecFromSubplotSpec
+
 fig = plt.figure(figsize=(10,10))
 gs_vert = GridSpec(3, 1)
 gs_lower = GridSpecFromSubplotSpec(1, 2, subplot_spec=gs_vert[1])
