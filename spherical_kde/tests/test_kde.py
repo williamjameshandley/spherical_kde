@@ -66,8 +66,8 @@ def test_kde_plotting():
     fig.add_subplot(313, projection=cartopy.crs.PlateCarree())
     for ax, col in zip(fig.axes, ['g', 'r', 'b']):
         kde.plot(ax, col)
-        kde.plot_decra_samples(ax)
-        kde.plot_decra_samples(ax, nsamples=10)
+        kde.plot_samples(ax)
+        kde.plot_samples(ax, nsamples=10)
 
 
 def test_kde_normalised():

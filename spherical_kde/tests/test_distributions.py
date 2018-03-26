@@ -59,5 +59,5 @@ def test_VonMisesFisher_standarddeviation():
         phi0, theta0, sigma0 = random_phi_theta_sigma()
         N = 10000
         phi, theta = dxns.VonMisesFisher_sample(phi0, theta0, sigma0, N)
-        sigma = dxns.VonMises_standarddeviation(phi, theta)
+        sigma = dxns.VonMises_std(phi, theta)
         assert_allclose(sigma0, sigma, 1e-2)

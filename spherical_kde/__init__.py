@@ -1,51 +1,48 @@
 import matplotlib
-from scipy.special import logsumexp
 import numpy
-from spherical_kde.distributions import (VonMisesFisher_distribution as VMF,
-                                         VonMises_standarddeviation)
-from spherical_kde.utils import decra_from_polar, polar_from_decra
 import cartopy.crs
+from scipy.special import logsumexp
+from spherical_kde.utils import decra_from_polar, polar_from_decra
+from spherical_kde.distributions import (VonMisesFisher_distribution as VMF,
+                                         VonMises_std)
 
 
 class SphericalKDE(object):
     """ Spherical kernel density estimator
 
-    Args:
-        phi_samples (array-like)
-            azimuthal samples to construct the kde
+    Parameters
+    ----------
+    phi_samples, theta_samples : array_like
+        spherical-polar samples to construct the kde
 
-        theta_samples (array-like)
-            polar samples to construct the kde
+    weights : array_like
+        Sample weighting
+        default [1] * len(phi_samples))
 
-        weights (array-like: default [1] * len(phi_samples))
-            weighting for the samples
+    bandwidth : float
+        bandwidth of the KDE. Increasing bandwidth increases smoothness
 
-        bandwidth (float: default 0.2)
-            bandwidth of the KDE. Increasing bandwidth increases smoothness
+    density : int
+        number of grid points in theta and phi to draw contours.
 
-        density (int: default 100)
-            number of grid points in theta and phi to draw contours.
+    Attributes
+    ----------
+    phi, theta : numpy.array
+        spherical polar samples
 
-    Attributes:
-        phi (numpy.array)
-            Azimuthal samples.
+    weights : numpy.array
+        Sample weighting (normalised to sum to 1).
 
-        theta (numpy.array)
-            Polar samples.
+    bandwidth : float
+        Bandwidth of the kde. defaults to rule-of-thumb estimator
+        https://en.wikipedia.org/wiki/Kernel_density_estimation
+        Set to None to use this value
 
-        weights (numpy.array)
-            Sample weighting (normalised to sum to 1).
+    density : int
+        number of grid points in theta and phi to draw contours.
 
-        bandwidth (float)
-            Bandwidth of the kde. defaults to rule-of-thumb estimator:
-            https://en.wikipedia.org/wiki/Kernel_density_estimation
-            Set to None to use this value
-
-        density (int)
-            number of gridpoints in each direction to evaluate KDE over sphere
-
-        palefactor (float)
-            Getdist-style colouration factor of sigma-contours.
+    palefactor : float
+        getdist-style colouration factor of sigma-contours.
     """
     def __init__(self, phi_samples, theta_samples,
                  weights=None, bandwidth=None, density=100):
@@ -69,35 +66,52 @@ class SphericalKDE(object):
                              "shape as weights ({}!={})".format(
                                  len(self.phi), len(self.weights)))
 
-        sigmahat = VonMises_standarddeviation(self.theta, self.phi)
+        sigmahat = VonMises_std(self.theta, self.phi)
         self.suggested_bandwidth = 1.06*sigmahat*len(weights)**-0.2
-
-    @property
-    def bandwidth(self):
-        if self._bandwidth is None:
-            return self.suggested_bandwidth
-        else:
-            return self._bandwidth
-
-    @bandwidth.setter
-    def bandwidth(self, value):
-        self._bandwidth = value
 
     def __call__(self, phi, theta):
         """ Log-probability density estimate
 
-        Args:
-            phi (float or array-like)
-                azimuthal angle.
+        Parameters
+        ----------
+        phi, theta : float or array_like
+            Spherical polar coordinate
 
-            theta (float or array-like)
-                polar angle.
+        Returns
+        -------
+        float or array_like
+            log-probability area density
         """
         return logsumexp(VMF(phi, theta, self.phi, self.theta, self.bandwidth),
                          axis=-1, b=self.weights)
 
-    def plot(self, ax, colour='g'):
-        """ Plot the KDE on an axis. """
+    def plot(self, ax, colour='g', **kwargs):
+        """ Plot the KDE on an axis.
+
+        Parameters
+        ----------
+        ax : matplotlib.axes.Axes
+            matplotlib axis to plot on. This must be constructed with a
+            `cartopy.crs.projection`:
+            >>> import cartopy
+            >>> import matplotlib.pyplot as plt
+            >>> fig = plt.subplots()
+            >>> ax = fig.add_subplot(111, projection=cartopy.crs.Mollweide())
+
+        color
+            Colour to plot the contours.
+            *arg* can be an *RGB* or *RGBA* sequence or a string in any of
+            several forms:
+                1) a letter from the set 'rgbcmykw'
+                2) a hex color string, like '#00FFFF'
+                3) a standard name, like 'aqua'
+                4) a string representation of a float, like '0.4',
+            This is passed into `matplotlib.colors.colorConverter.to_rgb`
+
+        Keywords
+        --------
+        Any other keywords are passed to `matplotlib.axes.Axes.contourf`
+        """
         try:
             if not isinstance(ax.projection, cartopy.crs.Projection):
                 raise TypeError("ax.projection must be type"
@@ -122,14 +136,45 @@ class SphericalKDE(object):
 
         # Plot the countours on a suitable equiangular projection
         ax.contourf(X, Y, P, levels=levels, colors=self._colours(colour),
-                    transform=cartopy.crs.PlateCarree())
+                    transform=cartopy.crs.PlateCarree(), *kwargs)
 
-    def plot_decra_samples(self, ax, color='k', nsamples=None):
-        """ Plot equally weighted samples on an axis. """
-        ra, dec = self._decra_samples(nsamples)
-        ax.plot(ra, dec, 'k.', transform=cartopy.crs.PlateCarree())
+    def plot_samples(self, ax, nsamples=None, **kwargs):
+        """ Plot equally weighted samples on an axis. 
+        
+        Parameters
+        ----------
+        ax : matplotlib.axes.Axes
+            matplotlib axis to plot on. This must be constructed with a
+            `cartopy.crs.projection`:
+            >>> import cartopy
+            >>> import matplotlib.pyplot as plt
+            >>> fig = plt.subplots()
+            >>> ax = fig.add_subplot(111, projection=cartopy.crs.Mollweide())
 
-    def _decra_samples(self, nsamples=None):
+        nsamples : int
+            Approximate number of samples to plot. Can only thin down to
+            this number, not bulk up
+
+        Keywords
+        --------
+        Any other keywords are passed to `matplotlib.axes.Axes.plot`
+        
+        """
+        ra, dec = self._samples(nsamples)
+        ax.plot(ra, dec, 'k.', transform=cartopy.crs.PlateCarree(), *kwargs)
+
+    @property
+    def bandwidth(self):
+        if self._bandwidth is None:
+            return self.suggested_bandwidth
+        else:
+            return self._bandwidth
+
+    @bandwidth.setter
+    def bandwidth(self, value):
+        self._bandwidth = value
+
+    def _samples(self, nsamples=None):
         weights = self.weights / self.weights.max()
         if nsamples is not None:
             weights /= weights.sum()

@@ -5,48 +5,64 @@ from spherical_kde.utils import (cartesian_from_polar,
                                  rotation_matrix)
 
 
-def VonMisesFisher_distribution(phi, theta, phi0, theta0, sigma):
+def VonMisesFisher_distribution(phi, theta, phi0, theta0, sigma0):
     """ Von-Mises Fisher distribution function.
 
-    https://en.wikipedia.org/wiki/Von_Mises-Fisher_distribution
 
-    Args:
-        phi, theta (float or array-like)
-            Spherical-polar coordinates to evaluate function at.
+    Parameters
+    ----------
+    phi, theta : float or array_like
+        Spherical-polar coordinates to evaluate function at.
 
-        phi0, theta0 (float or array-like)
-            Center of the distribution.
+    phi0, theta0 : float or array-like
+        Spherical-polar coordinates of the center of the distribution.
 
-        sigma
-            Width of the distribution.
+    sigma0 : float
+        Width of the distribution.
+
+    Returns
+    -------
+    float or array_like
+        log-probability of the vonmises fisher distribution.
+
+    Notes
+    -----
+    Wikipedia:
+        https://en.wikipedia.org/wiki/Von_Mises-Fisher_distribution
     """
     x = cartesian_from_polar(phi, theta)
     x0 = cartesian_from_polar(phi0, theta0)
-    return (-numpy.log(4*numpy.pi*sigma**2) - logsinh(1./sigma**2)
-            + numpy.tensordot(x, x0, axes=[[0], [0]])/sigma**2)
+    norm = -numpy.log(4*numpy.pi*sigma0**2) - logsinh(1./sigma0**2)
+    return norm + numpy.tensordot(x, x0, axes=[[0], [0]])/sigma0**2
 
 
-def VonMisesFisher_sample(phi0, theta0, sigma, size=None):
+def VonMisesFisher_sample(phi0, theta0, sigma0, size=None):
     """ Draw a sample from the Von-Mises Fisher distribution.
 
-    Args:
-        phi0, theta0 (float or array-like)
-            Center of the distribution.
+    Parameters
+    ----------
+    phi0, theta0 : float or array-like
+        Spherical-polar coordinates of the center of the distribution.
 
-        sigma
-            Width of the distribution.
+    sigma0 : float
+        Width of the distribution.
 
-        size (int, tuple, array-like) default None
-            number of samples to draw
+    size : int, tuple, array-like
+        number of samples to draw.
 
+    Returns
+    -------
+    phi, theta : float or array_like
+        Spherical-polar coordinates of sample from distribution.
     """
     n0 = cartesian_from_polar(phi0, theta0)
-    M = rotation_matrix([0,0,1],n0)
+    M = rotation_matrix([0, 0, 1], n0)
 
     x = numpy.random.uniform(size=size)
     phi = numpy.random.uniform(size=size) * 2*numpy.pi
-    theta = numpy.arccos(1 + sigma**2 * numpy.log(1 + (numpy.exp(-2/sigma**2)-1) * x))
-    n = cartesian_from_polar(phi, theta) 
+    theta = numpy.arccos(1 + sigma0**2 *
+                         numpy.log(1 + (numpy.exp(-2/sigma0**2)-1) * x))
+    n = cartesian_from_polar(phi, theta)
 
     x = M.dot(n)
     phi, theta = polar_from_cartesian(x)
@@ -57,16 +73,22 @@ def VonMisesFisher_sample(phi0, theta0, sigma, size=None):
 def VonMises_mean(phi, theta):
     """ Von-Mises sample mean.
 
-    As advised in
+    Parameters
+    ----------
+    phi, theta : array-like
+        Spherical-polar coordinate samples to compute mean from.
 
-    https://en.wikipedia.org/wiki/Von_Mises-Fisher_distribution#Estimation_of_parameters
+    Returns
+    -------
+    float
 
-    Args:
-        phi, theta (array-like)
-            Spherical-polar coordinate samples to compute mean from.
+        ..math::
+            \sum_i^N x_i / || \sum_i^N x_i ||
 
-    Returns:
-        \sum_i^N x_i / || \sum_i^N x_i ||
+    Notes
+    -----
+    Wikipedia:
+        https://en.wikipedia.org/wiki/Von_Mises-Fisher_distribution#Estimation_of_parameters
     """
     x = cartesian_from_polar(phi, theta)
     S = numpy.sum(x, axis=-1)
@@ -74,22 +96,29 @@ def VonMises_mean(phi, theta):
     return phi, theta
 
 
-def VonMises_standarddeviation(phi, theta):
+def VonMises_std(phi, theta):
     """ Von-Mises sample standard deviation.
 
-    As advised in
+    Parameters
+    ----------
+    phi, theta : array-like
+        Spherical-polar coordinate samples to compute mean from.
 
-    https://en.wikipedia.org/wiki/Von_Mises-Fisher_distribution#Estimation_of_parameters
+    Returns
+    -------
+        solution for 
+        
+        ..math:: 1/tanh(x) - 1/x = R,
 
-    but re-parameterised for sigma rather than kappa
+        where 
+        
+        ..math:: R = || \sum_i^N x_i || / N
 
-    Args:
-        phi, theta (array-like)
-            Spherical-polar coordinate samples to compute mean from.
-
-    Returns:
-        solution for 1/tanh(x) - 1/x = R,
-        where R = || \sum_i^N x_i || / N
+    Notes
+    -----
+    Wikipedia:
+        https://en.wikipedia.org/wiki/Von_Mises-Fisher_distribution#Estimation_of_parameters
+        but re-parameterised for sigma rather than kappa.
     """
     x = cartesian_from_polar(phi, theta)
     S = numpy.sum(x, axis=-1)

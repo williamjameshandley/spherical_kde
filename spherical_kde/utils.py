@@ -5,16 +5,15 @@ from scipy.integrate import dblquad
 def cartesian_from_polar(phi, theta):
     """ Embedded 3D unit vector from spherical polar coordinates.
 
-    Args:
-        phi (float or numpy.array)
-            azimuthal angle in radians
+    Parameters
+    ----------
+    phi, theta : float or numpy.array
+        azimuthal and polar angle in radians.
 
-        theta (float or numpy.array)
-            polar angle in radians
-
-    Returns:
-        nhat (numpy.array)
-            unit vector(s) in direction phi, theta
+    Returns
+    -------
+    nhat : numpy.array
+        unit vector(s) in direction (phi, theta).
     """
     x = numpy.sin(theta) * numpy.cos(phi)
     y = numpy.sin(theta) * numpy.sin(phi)
@@ -25,16 +24,15 @@ def cartesian_from_polar(phi, theta):
 def polar_from_cartesian(x):
     """ Embedded 3D unit vector from spherical polar coordinates.
 
-    Args:
-        phi (float or numpy.array)
-            azimuthal angle in radians
+    Parameters
+    ----------
+    x : array_like
+        cartesian coordinates
 
-        theta (float or numpy.array)
-            polar angle in radians
-
-    Returns:
-        nhat (numpy.array)
-            unit vector(s) in direction phi, theta
+    Returns
+    -------
+    phi, theta : float or numpy.array
+        azimuthal and polar angle in radians.
     """
     x = numpy.array(x)
     r = (x*x).sum(axis=0)**0.5
@@ -47,16 +45,15 @@ def polar_from_cartesian(x):
 def polar_from_decra(ra, dec):
     """ Convert from spherical polar coordinates to ra and dec.
 
-    Args:
-        ra (float or numpy.array)
-            Right ascension in degrees
+    Parameters
+    ----------
+    ra, dec : float or numpy.array
+        Right ascension and declination in degrees.
 
-        dec (float or numpy.array)
-            Declination in degrees
-
-    Returns:
-        phi, theta (float or numpy.array)
-            Spherical polar coordinates in radians
+    Returns
+    -------
+    phi, theta : float or numpy.array
+        Spherical polar coordinates in radians
     """
     phi = numpy.mod(ra/180.*numpy.pi, 2*numpy.pi)
     theta = numpy.pi/2-dec/180.*numpy.pi
@@ -66,16 +63,15 @@ def polar_from_decra(ra, dec):
 def decra_from_polar(phi, theta):
     """ Convert from ra and dec to spherical polar coordinates.
 
-    Args:
-        phi (float or numpy.array)
-            azimuthal angle in radians
+    Parameters
+    ----------
+    phi, theta : float or numpy.array
+        azimuthal and polar angle in radians
 
-        theta (float or numpy.array)
-            polar angle in radians
-
-    Returns:
-        phi, theta (float or numpy.array)
-            Right ascension and declination in degrees
+    Returns
+    -------
+    ra, dec : float or numpy.array
+        Right ascension and declination in degrees.
     """
     ra = phi * (phi < numpy.pi) + (phi-2*numpy.pi)*(phi > numpy.pi)
     dec = numpy.pi/2-theta
@@ -85,11 +81,15 @@ def decra_from_polar(phi, theta):
 def logsinh(x):
     """ Compute log(sinh(x)), stably for large x.
 
-    Args:
-        x (float or numpy.array)
-            argument to evaluate at, must be positive
-    Returns:
-        log(sinh(x)) (float or numpy.array)
+    Parameters
+    ----------
+    x : float or numpy.array
+        argument to evaluate at, must be positive
+
+    Returns
+    -------
+    float or numpy.array
+        log(sinh(x))
     """
     if numpy.any(x < 0):
         raise ValueError("logsinh only valid for positive arguments")
@@ -99,8 +99,20 @@ def logsinh(x):
 def rotation_matrix(a, b):
     """ The rotation matrix that takes a onto b.
 
-    Notes:
-    https://math.stackexchange.com/questions/180418/calculate-rotation-matrix-to-align-vector-a-to-vector-b-in-3d
+    Parameters
+    ----------
+    a, b : numpy.array
+        Three dimensional vectors defining the rotation matrix
+
+    Returns
+    -------
+    M : numpy.array
+        Three by three rotation matrix
+
+    Notes
+    -----
+    StackExchange post:
+        https://math.stackexchange.com/questions/180418/calculate-rotation-matrix-to-align-vector-a-to-vector-b-in-3d
     """
     v = numpy.cross(a, b)
     s = v.dot(v)**0.5
@@ -118,14 +130,24 @@ def rotation_matrix(a, b):
 
 
 def spherical_integrate(f, log=False):
-    """ Integrate an area density function over the sphere.
+    r""" Integrate an area density function over the sphere.
 
-    Args:
-        f: function (phi, theta) -> float
-            function to integrate over
+    Parameters
+    ----------
+    f : callable
+        function to integrate  (phi, theta) -> float
 
-        log: bool (default False)
-            Should the function be exponentiated?
+    log : bool
+        Should the function be exponentiated?
+
+    Returns
+    -------
+    float
+        Spherical area integral
+
+        .. math::
+            \int_0^{2\pi}d\phi\int_0^\pi d\theta
+            f(\phi, \theta) \sin(\theta)
     """
     if log:
         def g(phi, theta):
@@ -138,15 +160,24 @@ def spherical_integrate(f, log=False):
 
 
 def spherical_kullback_liebler(logp, logq):
-    """ Compute the spherical Kullback-Liebler divergence.
+    r""" Compute the spherical Kullback-Liebler divergence.
 
-    Args:
-        logp, logq: function phi, theta -> float
-            log-probability distributions
-    Returns:
-        float
-            Kullback-Liebler divergence
-    Notes:
+    Parameters
+    ----------
+    logp, logq : callable
+        log-probability distributions  (phi, theta) -> float
+
+    Returns
+    -------
+    float
+        Kullback-Liebler divergence
+
+            .. math::
+                \int P(x)\log \frac{P(x)}{Q(x)} dx
+
+    Notes
+    -----
+    Wikipedia post:
         https://en.wikipedia.org/wiki/Kullback-Leibler_divergence
     """
     def KL(phi, theta):
