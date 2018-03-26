@@ -1,6 +1,8 @@
 [![Build Status](https://travis-ci.org/williamjameshandley/spherical_kde.svg?branch=master)](https://travis-ci.org/williamjameshandley/spherical_kde)
 [![codecov](https://codecov.io/gh/williamjameshandley/spherical_kde/branch/master/graph/badge.svg)](https://codecov.io/gh/williamjameshandley/spherical_kde)
 [![PyPI version](https://badge.fury.io/py/spherical_kde.svg)](https://badge.fury.io/py/spherical_kde)
+[![Documentation Status](https://readthedocs.org/projects/pip/badge/?version=stable)](http://pip.pypa.io/en/stable/?badge=stable)
+
 
 
 Spherical Kernel Density Estimation

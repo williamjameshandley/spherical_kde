@@ -10,15 +10,10 @@ Welcome to spherical_kde's documentation!
    :maxdepth: 2
    :caption: Contents:
 
-.. autosummary::
-   :toctree: _autosummary
-   
+   modules
    spherical_kde
-   spherical_kde.utils
-   spherical_kde.distributions
-   spherical_kde.tests.test_kde
-   spherical_kde.tests.test_distributions
-   spherical_kde.tests.test_utils
+   spherical_kde.tests
+
 
 
 Indices and tables

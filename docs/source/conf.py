@@ -28,10 +28,6 @@ version = ''
 # The full version, including alpha/beta/rc tags
 release = '0.0.6'
 
-import sys
-import os
-sys.path.append(os.path.abspath('../../'))
-
 
 # -- General configuration ---------------------------------------------------
 
@@ -44,7 +40,6 @@ sys.path.append(os.path.abspath('../../'))
 # ones.
 extensions = [
     'sphinx.ext.autodoc',
-    'sphinx.ext.autosummary',
     'sphinx.ext.doctest',
     'sphinx.ext.intersphinx',
     'sphinx.ext.todo',
@@ -55,8 +50,6 @@ extensions = [
     'sphinx.ext.githubpages',
     'numpydoc',
 ]
-
-autosummary_generate = True
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
