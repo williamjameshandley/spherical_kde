@@ -3,7 +3,7 @@ from scipy.special import logsumexp
 import numpy
 from spherical_kde.distributions import (VonMisesFisher_distribution as VMF,
                                          VonMises_standarddeviation)
-from spherical_kde.utils import polar_to_decra, decra_to_polar
+from spherical_kde.utils import decra_from_polar, polar_from_decra
 import cartopy.crs as ccrs
 
 
@@ -106,7 +106,7 @@ class SphericalKDE(object):
         ra = numpy.linspace(-180, 180, self.density)
         dec = numpy.linspace(-89, 89, self.density)
         X, Y = numpy.meshgrid(ra, dec)
-        phi, theta = decra_to_polar(X, Y)
+        phi, theta = polar_from_decra(X, Y)
         P = numpy.exp(self(phi, theta))
 
         # Find 2- and 1-sigma contours
@@ -133,7 +133,7 @@ class SphericalKDE(object):
         i_ = weights > numpy.random.rand(len(weights))
         phi = self.phi[i_]
         theta = self.theta[i_]
-        ra, dec = polar_to_decra(phi, theta)
+        ra, dec = decra_from_polar(phi, theta)
         return ra, dec
 
     def _colours(self, colour):

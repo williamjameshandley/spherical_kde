@@ -1,7 +1,7 @@
 import numpy
 import scipy.optimize
-from spherical_kde.utils import (cartesian_from_spherical,
-                                 spherical_from_cartesian, logsinh)
+from spherical_kde.utils import (cartesian_from_polar,
+                                 polar_from_cartesian, logsinh)
 
 
 def VonMisesFisher_distribution(phi, theta, phi0, theta0, sigma):
@@ -19,8 +19,8 @@ def VonMisesFisher_distribution(phi, theta, phi0, theta0, sigma):
         sigma
             Width of the distribution.
     """
-    x = cartesian_from_spherical(phi, theta)
-    x0 = cartesian_from_spherical(phi0, theta0)
+    x = cartesian_from_polar(phi, theta)
+    x0 = cartesian_from_polar(phi0, theta0)
     return (-numpy.log(4*numpy.pi*sigma**2) - logsinh(1./sigma**2)
             + numpy.tensordot(x, x0, axes=[[0], [0]])/sigma**2)
 
@@ -39,9 +39,9 @@ def VonMises_mean(phi, theta):
     Returns:
         \sum_i^N x_i / || \sum_i^N x_i ||
     """
-    x = cartesian_from_spherical(phi, theta)
+    x = cartesian_from_polar(phi, theta)
     S = numpy.sum(x, axis=-1)
-    phi, theta = spherical_from_cartesian(S)
+    phi, theta = polar_from_cartesian(S)
     return phi, theta
 
 
@@ -62,7 +62,7 @@ def VonMises_standarddeviation(phi, theta):
         solution for 1/tanh(x) - 1/x = R,
         where R = || \sum_i^N x_i || / N
     """
-    x = cartesian_from_spherical(phi, theta)
+    x = cartesian_from_polar(phi, theta)
     S = numpy.sum(x, axis=-1)
     R = S.dot(S)**0.5/x.shape[-1]
 

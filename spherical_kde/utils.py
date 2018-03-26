@@ -1,7 +1,7 @@
 import numpy
 
 
-def cartesian_from_spherical(phi, theta):
+def cartesian_from_polar(phi, theta):
     """ Embedded 3D unit vector from spherical polar coordinates.
 
     Args:
@@ -20,7 +20,7 @@ def cartesian_from_spherical(phi, theta):
     z = numpy.cos(theta)
     return numpy.array([x, y, z])
 
-def spherical_from_cartesian(x):
+def polar_from_cartesian(x):
     """ Embedded 3D unit vector from spherical polar coordinates.
 
     Args:
@@ -42,7 +42,7 @@ def spherical_from_cartesian(x):
     return phi, theta
 
 
-def decra_to_polar(ra, dec):
+def polar_from_decra(ra, dec):
     """ Convert from spherical polar coordinates to ra and dec.
 
     Args:
@@ -61,7 +61,7 @@ def decra_to_polar(ra, dec):
     return phi, theta
 
 
-def polar_to_decra(phi, theta):
+def decra_from_polar(phi, theta):
     """ Convert from ra and dec to spherical polar coordinates.
 
     Args:
@@ -78,32 +78,6 @@ def polar_to_decra(phi, theta):
     ra = phi * (phi < numpy.pi) + (phi-2*numpy.pi)*(phi > numpy.pi)
     dec = numpy.pi/2-theta
     return ra/numpy.pi*180, dec/numpy.pi*180
-
-
-def infinite_sum(f, i0=0, rtol=1e-8):
-    """ Sum a function from i0 to infinity
-
-    Args:
-        f (function int -> summable object)
-            Function to sum to infinity.
-
-        i0 (int: default 0)
-            starting integer.
-
-        rtol (float: default 1e-8)
-            relative tolerance.
-
-    Returns:
-        sum(f(i) for i in range(i0, infinity))
-    """
-    i = i0
-    total = 0.
-    while True:
-        diff = f(i)
-        if diff < rtol*total:
-            return total
-        total += diff
-        i += 1
 
 
 def logsinh(x):
