@@ -39,7 +39,7 @@ def polar_from_cartesian(x):
     r = (x*x).sum(axis=0)**0.5
     x, y, z = x
     theta = numpy.arccos(z / r)
-    phi = numpy.arctan2(y, x)
+    phi = numpy.mod(numpy.arctan2(y, x), numpy.pi*2)
     return phi, theta
 
 
@@ -93,3 +93,25 @@ def logsinh(x):
     if numpy.any(x < 0):
         raise ValueError("logsinh only valid for positive arguments")
     return x + numpy.log(1-numpy.exp(-2*x)) - numpy.log(2)
+
+
+def rotation_matrix(a, b):
+    """ The rotation matrix that takes a onto b. 
+    
+    Notes:
+    https://math.stackexchange.com/questions/180418/calculate-rotation-matrix-to-align-vector-a-to-vector-b-in-3d
+    
+    """
+    v = numpy.cross(a, b)
+    s = v.dot(v)**0.5
+    if s == 0:
+        return numpy.identity(3)
+    c = numpy.dot(a, b)
+    I = numpy.identity(3)
+    v1, v2, v3 = v
+    vx = numpy.array([[0, -v3, v2],
+                      [v3, 0, -v1],
+                      [-v2, v1, 0]])
+    vx2 = numpy.matmul(vx,vx)
+    R = I + vx + vx2 * (1-c)/s**2
+    return R

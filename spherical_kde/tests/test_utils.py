@@ -83,3 +83,16 @@ def test_logsinh_positive_arg():
         utils.logsinh(-1)
     with pytest.raises(ValueError):
         utils.logsinh(numpy.array([1, -1]))
+
+
+def test_rotation_matrix():
+    numpy.random.seed(seed=0)
+
+    theta = numpy.random.rand(10, 2)*numpy.pi
+    phi = numpy.random.rand(10, 2)*2*numpy.pi
+    for (p1, p2), (t1, t2) in zip(phi, theta):
+        n1 = utils.cartesian_from_polar(p1, t1)
+        n2 = utils.cartesian_from_polar(p2, t2)
+        M = utils.rotation_matrix(n1, n2)
+        assert_allclose(M.dot(n1), n2)
+        assert_allclose(M.T.dot(n2), n1)
