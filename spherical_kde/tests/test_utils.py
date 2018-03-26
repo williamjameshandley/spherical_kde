@@ -110,20 +110,14 @@ def test_spherical_integrate():
 
 
 def test_spherical_kullback_liebler():
-    def p(phi, theta):
-        return numpy.sin(theta)/numpy.pi**2
-
     def logp(phi, theta):
-        return numpy.log(p(phi, theta))
-
-    def q(phi, theta):
-        return 1/numpy.pi/4
+        return numpy.log(numpy.sin(theta)/numpy.pi**2)
 
     def logq(phi, theta):
-        return numpy.log(q(phi, theta))
+        return numpy.log(1/numpy.pi/4)
 
-    assert_allclose(utils.spherical_integrate(p),1)
-    assert_allclose(utils.spherical_integrate(q),1)
+    assert_allclose(utils.spherical_integrate(logp, log=True), 1)
+    assert_allclose(utils.spherical_integrate(logq, log=True), 1)
 
-    KL = utils.spherical_kullback_liebler(logp,logq)
-    assert_allclose(KL, numpy.log(numpy.pi/2) - 1./2)
+    KL = utils.spherical_kullback_liebler(logp, logq)
+    assert_allclose(KL, 1./2 - numpy.log(numpy.pi/2))

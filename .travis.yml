@@ -1,7 +1,7 @@
 language: python
 python:
     - "3.6"
-before_install:
+before_install: # Install cartopy workarounds https://laszukdawid.com/2017/06/04/installing-cartopy-on-ubuntu-14-04-or-travis-ci/
   - sudo apt-get install -y libproj-dev proj-bin proj-data
   - sudo apt-get install -y python-pyproj
   - sudo apt-get install -y libc6
@@ -10,4 +10,8 @@ before_install:
   - wget http://es.archive.ubuntu.com/ubuntu/pool/universe/p/proj/libproj-dev_4.9.2-2_amd64.deb
   - sudo dpkg -i libproj-dev_4.9.2-2_amd64.deb
   - pip install cython
+before_script:
+  - "export DISPLAY=:99.0"
+  - "sh -e /etc/init.d/xvfb start"
+  - sleep 3
 script: pytest

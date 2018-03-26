@@ -117,9 +117,22 @@ def rotation_matrix(a, b):
     return R
 
 
-def spherical_integrate(f):
-    """ Integrate an area density function over the sphere """
-    ans, _ = dblquad(lambda phi, theta: f(phi, theta)*numpy.sin(theta),
+def spherical_integrate(f, log=False):
+    """ Integrate an area density function over the sphere.
+
+    Args:
+        f: function (phi, theta) -> float
+            function to integrate over
+
+        log: bool (default False)
+            Should the function be exponentiated?
+    """
+    if log:
+        def g(phi, theta):
+            return numpy.exp(f(phi, theta))
+    else:
+        g = f
+    ans, _ = dblquad(lambda phi, theta: g(phi, theta)*numpy.sin(theta),
                      0, numpy.pi, lambda x: 0, lambda x: 2*numpy.pi)
     return ans
 
@@ -137,5 +150,5 @@ def spherical_kullback_liebler(logp, logq):
         https://en.wikipedia.org/wiki/Kullback-Leibler_divergence
     """
     def KL(phi, theta):
-        return (logq(phi, theta)-logp(phi, theta))*numpy.exp(logp(phi, theta))
+        return (logp(phi, theta)-logq(phi, theta))*numpy.exp(logp(phi, theta))
     return spherical_integrate(KL)
