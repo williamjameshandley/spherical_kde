@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/williamjameshandley/spherical_kde.svg?branch=master)](https://travis-ci.org/williamjameshandley/spherical_kde)
+
 Spherical Kernel Density Estimation
 ===================================
 
