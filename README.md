@@ -12,6 +12,8 @@ in
 with the
 [Von Mises-Fisher distribution](https://en.wikipedia.org/wiki/Von_Mises-Fisher_distribution).
 
+![](https://raw.github.com/williamjameshandley/spherical_kde/master/plot.png)
+
 Example Usage
 -------------
 
@@ -70,7 +72,6 @@ for ax in fig.axes:
 fig.tight_layout()
 fig.savefig('plot.png')
 ```
-![](https://raw.github.com/williamjameshandley/spherical_kde/master/plot.png)
 
 To do
 -----
