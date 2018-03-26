@@ -1,0 +1,6 @@
+pytest
+numpy
+scipy
+Cartopy
+matplotlib
+pypandoc
