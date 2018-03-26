@@ -11,3 +11,4 @@ before_install:
   - wget http://es.archive.ubuntu.com/ubuntu/pool/universe/p/proj/libproj-dev_4.9.2-2_amd64.deb
   - sudo dpkg -i libproj-dev_4.9.2-2_amd64.deb
   - pip install cython
+script: pytest
