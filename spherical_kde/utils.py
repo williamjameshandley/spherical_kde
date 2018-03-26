@@ -34,9 +34,10 @@ def spherical_from_cartesian(x):
         nhat (numpy.array)
             unit vector(s) in direction phi, theta
     """
-    r = (x.dot(x))**0.5
+    x = numpy.array(x)
+    r = (x*x).sum(axis=0)**0.5
     x, y, z = x
-    theta = numpy.arccos(z / numpy.sqrt(x**2 + y**2))
+    theta = numpy.arccos(z / r)
     phi = numpy.arctan2(y, x)
     return phi, theta
 
