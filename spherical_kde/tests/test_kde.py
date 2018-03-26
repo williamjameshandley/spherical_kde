@@ -1,10 +1,10 @@
 import spherical_kde
 import numpy
 import pytest
+from numpy.testing import assert_allclose
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_agg import FigureCanvasAgg
-#import cartopy.crs as ccrs
-from numpy.testing import assert_allclose
+import cartopy.crs as ccrs
 from spherical_kde.tests.test_distributions import random_phi_theta_sigma
 from spherical_kde.utils import spherical_integrate, spherical_kullback_liebler
 from spherical_kde.distributions import (VonMisesFisher_sample,
@@ -48,9 +48,9 @@ def test_kde_plotting():
     kde = random_kde(100)[0]
     fig = Figure()
     FigureCanvasAgg(fig)
-    fig.add_subplot(311)#, projection=ccrs.Mollweide())
-    fig.add_subplot(312)#, projection=ccrs.Orthographic())
-    fig.add_subplot(313)#, projection=ccrs.PlateCarree())
+    fig.add_subplot(311, projection=ccrs.Mollweide())
+    fig.add_subplot(312, projection=ccrs.Orthographic())
+    fig.add_subplot(313, projection=ccrs.PlateCarree())
     for ax, col in zip(fig.axes, ['g', 'r', 'b']):
         kde.plot(ax, col)
         kde.plot_decra_samples(ax)
