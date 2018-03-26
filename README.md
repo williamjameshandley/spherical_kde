@@ -1,5 +1,6 @@
 [![Build Status](https://travis-ci.org/williamjameshandley/spherical_kde.svg?branch=master)](https://travis-ci.org/williamjameshandley/spherical_kde)
 [![codecov](https://codecov.io/gh/williamjameshandley/spherical_kde/branch/master/graph/badge.svg)](https://codecov.io/gh/williamjameshandley/spherical_kde)
+[![PyPI version](https://badge.fury.io/py/spherical_kde.svg)](https://badge.fury.io/py/spherical_kde)
 
 
 Spherical Kernel Density Estimation
@@ -74,7 +75,3 @@ for ax in fig.axes:
 fig.tight_layout()
 fig.savefig('plot.png')
 ```
-
-To do
------
-* [x] Bandwidth estimation
