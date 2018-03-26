@@ -1,6 +1,0 @@
-Cartopy
-numpy
-matplotlib
-scipy
-pytest
-pypandoc

@@ -1,0 +1,10 @@
+name: spherical_kde-read-the-docs-environment
+
+dependencies:
+    - python=3.6
+    - Cartopy
+    - numpy
+    - matplotlib
+    - scipy
+    - pytest
+    - pypandoc
