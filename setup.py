@@ -13,7 +13,7 @@ setup(name='spherical_kde',
       author_email='wh260@cam.ac.uk',
       url='https://github.com/williamjameshandley/spherical_kde',
       packages=['spherical_kde'],
-      install_requires=['numpy','matplotlib','scipy','cartopy'],
+      install_requires=['cartopy', 'pytest', 'numpy', 'scipy', 'matplotlib', 'pypandoc'],
       license='MIT',
       classifiers=[
       'Development Status :: 3 - Alpha',
