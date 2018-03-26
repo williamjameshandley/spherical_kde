@@ -1,3 +1,5 @@
+""" The spherical kernel density estimator class. """
+
 import matplotlib
 import numpy
 import cartopy.crs
@@ -93,6 +95,7 @@ class SphericalKDE(object):
         ax : matplotlib.axes.Axes
             matplotlib axis to plot on. This must be constructed with a
             `cartopy.crs.projection`:
+
             >>> import cartopy
             >>> import matplotlib.pyplot as plt
             >>> fig = plt.subplots()
@@ -139,13 +142,14 @@ class SphericalKDE(object):
                     transform=cartopy.crs.PlateCarree(), *kwargs)
 
     def plot_samples(self, ax, nsamples=None, **kwargs):
-        """ Plot equally weighted samples on an axis. 
-        
+        """ Plot equally weighted samples on an axis.
+
         Parameters
         ----------
         ax : matplotlib.axes.Axes
             matplotlib axis to plot on. This must be constructed with a
             `cartopy.crs.projection`:
+
             >>> import cartopy
             >>> import matplotlib.pyplot as plt
             >>> fig = plt.subplots()
@@ -158,7 +162,7 @@ class SphericalKDE(object):
         Keywords
         --------
         Any other keywords are passed to `matplotlib.axes.Axes.plot`
-        
+
         """
         ra, dec = self._samples(nsamples)
         ax.plot(ra, dec, 'k.', transform=cartopy.crs.PlateCarree(), *kwargs)

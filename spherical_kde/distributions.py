@@ -1,3 +1,9 @@
+""" Module containing the kernel function for the spherical KDE.
+
+For more detail, see:
+https://en.wikipedia.org/wiki/Von_Mises-Fisher_distribution
+"""
+
 import numpy
 import scipy.optimize
 from spherical_kde.utils import (cartesian_from_polar,
@@ -106,12 +112,12 @@ def VonMises_std(phi, theta):
 
     Returns
     -------
-        solution for 
-        
+        solution for
+
         ..math:: 1/tanh(x) - 1/x = R,
 
-        where 
-        
+        where
+
         ..math:: R = || \sum_i^N x_i || / N
 
     Notes

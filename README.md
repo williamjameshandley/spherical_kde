@@ -1,7 +1,8 @@
 [![Build Status](https://travis-ci.org/williamjameshandley/spherical_kde.svg?branch=master)](https://travis-ci.org/williamjameshandley/spherical_kde)
 [![codecov](https://codecov.io/gh/williamjameshandley/spherical_kde/branch/master/graph/badge.svg)](https://codecov.io/gh/williamjameshandley/spherical_kde)
 [![PyPI version](https://badge.fury.io/py/spherical_kde.svg)](https://badge.fury.io/py/spherical_kde)
-[![Documentation Status](https://readthedocs.org/projects/pip/badge/?version=stable)](http://pip.pypa.io/en/stable/?badge=stable)
+[![Documentation Status](https://readthedocs.org/projects/spherical-kde/badge/?version=latest)](http://spherical-kde.readthedocs.io/en/latest/?badge=latest)
+
 
 
 
@@ -9,13 +10,15 @@ Spherical Kernel Density Estimation
 ===================================
 
 These packages allow you to do rudimentary kernel density estimation on a
-sphere. Extreme alpha development status.
+sphere. Suggestions for improvements/extensions welcome.
 
 The fundamental principle is to replace the traditional Gaussian function used
 in 
 [kernel density estimation](https://en.wikipedia.org/wiki/Kernel_density_estimation)
 with the
 [Von Mises-Fisher distribution](https://en.wikipedia.org/wiki/Von_Mises-Fisher_distribution).
+
+Bandwidth estimation is still rough-and-ready.
 
 ![](https://raw.github.com/williamjameshandley/spherical_kde/master/plot.png)
 
@@ -26,7 +29,7 @@ Example Usage
 import numpy
 from spherical_kde import SphericalKDE
 import matplotlib.pyplot as plt
-import cartopy.crs as ccrs
+import cartopy.crs
 from matplotlib.gridspec import GridSpec, GridSpecFromSubplotSpec
 
 # Choose a seed for deterministic plot
@@ -37,10 +40,10 @@ fig = plt.figure(figsize=(10, 10))
 gs_vert = GridSpec(3, 1)
 gs_lower = GridSpecFromSubplotSpec(1, 2, subplot_spec=gs_vert[1])
 
-fig.add_subplot(gs_vert[0], projection=ccrs.Mollweide())
-fig.add_subplot(gs_lower[0], projection=ccrs.Orthographic())
-fig.add_subplot(gs_lower[1], projection=ccrs.Orthographic(-10, 45))
-fig.add_subplot(gs_vert[2], projection=ccrs.PlateCarree())
+fig.add_subplot(gs_vert[0], projection=cartopy.crs.Mollweide())
+fig.add_subplot(gs_lower[0], projection=cartopy.crs.Orthographic())
+fig.add_subplot(gs_lower[1], projection=cartopy.crs.Orthographic(-10, 45))
+fig.add_subplot(gs_vert[2], projection=cartopy.crs.PlateCarree())
 
 # Choose parameters for samples
 nsamples = 100
@@ -69,7 +72,7 @@ for ax in fig.axes:
     ax.gridlines()
     ax.coastlines(linewidth=0.1)
     kde_green.plot(ax, 'g')
-    kde_green.plot_decra_samples(ax)
+    kde_green.plot_samples(ax)
     kde_red.plot(ax, 'r')
     kde_blue.plot(ax, 'b')
 

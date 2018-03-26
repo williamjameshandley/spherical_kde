@@ -1,3 +1,11 @@
+""" Utilities
+
+* General stable functions
+* Transforming coordinates
+* Computing rotations
+* Performing spherical integrals
+"""
+
 import numpy
 from scipy.integrate import dblquad
 

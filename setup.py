@@ -8,7 +8,7 @@ except (IOError, ImportError):
     long_description = ''
 
 setup(name='spherical_kde',
-      version='0.0.6',
+      version='0.1.0',
       author='Will Handley',
       author_email='wh260@cam.ac.uk',
       url='https://github.com/williamjameshandley/spherical_kde',
@@ -17,7 +17,7 @@ setup(name='spherical_kde',
       install_requires=['cartopy', 'pytest', 'numpy', 'scipy', 'matplotlib', 'pypandoc', 'numpydoc'],
       license='MIT',
       classifiers=[
-      'Development Status :: 3 - Alpha',
+      'Development Status :: 4 - Beta',
       'Intended Audience :: Developers',
       'Natural Language :: English',
       'License :: OSI Approved :: MIT License',
