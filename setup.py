@@ -14,7 +14,7 @@ setup(name='spherical_kde',
       url='https://github.com/williamjameshandley/spherical_kde',
       download_url = 'https://github.com/williamjameshandley/spherical_kde/archive/0.0.6.tar.gz',
       packages=['spherical_kde'],
-      install_requires=['cartopy', 'pytest', 'numpy', 'scipy', 'matplotlib', 'pypandoc'],
+      install_requires=['cartopy', 'pytest', 'numpy', 'scipy', 'matplotlib', 'pypandoc', 'numpydoc'],
       license='MIT',
       classifiers=[
       'Development Status :: 3 - Alpha',
