@@ -97,24 +97,23 @@ def logsinh(x):
 
 
 def rotation_matrix(a, b):
-    """ The rotation matrix that takes a onto b. 
-    
+    """ The rotation matrix that takes a onto b.
+
     Notes:
     https://math.stackexchange.com/questions/180418/calculate-rotation-matrix-to-align-vector-a-to-vector-b-in-3d
-    
     """
     v = numpy.cross(a, b)
     s = v.dot(v)**0.5
     if s == 0:
         return numpy.identity(3)
     c = numpy.dot(a, b)
-    I = numpy.identity(3)
+    Id = numpy.identity(3)
     v1, v2, v3 = v
     vx = numpy.array([[0, -v3, v2],
                       [v3, 0, -v1],
                       [-v2, v1, 0]])
-    vx2 = numpy.matmul(vx,vx)
-    R = I + vx + vx2 * (1-c)/s**2
+    vx2 = numpy.matmul(vx, vx)
+    R = Id + vx + vx2 * (1-c)/s**2
     return R
 
 
@@ -125,3 +124,18 @@ def spherical_integrate(f):
     return ans
 
 
+def spherical_kullback_liebler(logp, logq):
+    """ Compute the spherical Kullback-Liebler divergence.
+
+    Args:
+        logp, logq: function phi, theta -> float
+            log-probability distributions
+    Returns:
+        float
+            Kullback-Liebler divergence
+    Notes:
+        https://en.wikipedia.org/wiki/Kullback-Leibler_divergence
+    """
+    def KL(phi, theta):
+        return (logq(phi, theta)-logp(phi, theta))*numpy.exp(logp(phi, theta))
+    return spherical_integrate(KL)
