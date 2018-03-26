@@ -4,7 +4,7 @@ import pytest
 from numpy.testing import assert_allclose
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_agg import FigureCanvasAgg
-import cartopy.crs as ccrs
+import cartopy.crs
 from spherical_kde.tests.test_distributions import random_phi_theta_sigma
 from spherical_kde.utils import spherical_integrate, spherical_kullback_liebler
 from spherical_kde.distributions import (VonMisesFisher_sample,
@@ -32,6 +32,19 @@ def test_kde_incorrect_lengths():
         spherical_kde.SphericalKDE([1, 2], [1, 2], [1])
 
 
+def test_kde_incorrect_projection():
+    numpy.random.seed(seed=0)
+    fig = Figure()
+    FigureCanvasAgg(fig)
+    ax = fig.add_subplot(111)
+    kde = random_kde(100)[0]
+    with pytest.raises(TypeError):
+        kde.plot(ax)
+    ax.projection = 1
+    with pytest.raises(TypeError):
+        kde.plot(ax)
+
+
 def test_kde_bandwith_automatic():
     numpy.random.seed(seed=0)
     kde, phi0, theta0, sigma0 = random_kde(100)
@@ -48,12 +61,13 @@ def test_kde_plotting():
     kde = random_kde(100)[0]
     fig = Figure()
     FigureCanvasAgg(fig)
-    fig.add_subplot(311, projection=ccrs.Mollweide())
-    fig.add_subplot(312, projection=ccrs.Orthographic())
-    fig.add_subplot(313, projection=ccrs.PlateCarree())
+    fig.add_subplot(311, projection=cartopy.crs.Mollweide())
+    fig.add_subplot(312, projection=cartopy.crs.Orthographic())
+    fig.add_subplot(313, projection=cartopy.crs.PlateCarree())
     for ax, col in zip(fig.axes, ['g', 'r', 'b']):
         kde.plot(ax, col)
         kde.plot_decra_samples(ax)
+        kde.plot_decra_samples(ax, nsamples=10)
 
 
 def test_kde_normalised():

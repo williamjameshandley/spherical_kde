@@ -4,7 +4,7 @@ import numpy
 from spherical_kde.distributions import (VonMisesFisher_distribution as VMF,
                                          VonMises_standarddeviation)
 from spherical_kde.utils import decra_from_polar, polar_from_decra
-import cartopy.crs as ccrs
+import cartopy.crs
 
 
 class SphericalKDE(object):
@@ -98,9 +98,13 @@ class SphericalKDE(object):
 
     def plot(self, ax, colour='g'):
         """ Plot the KDE on an axis. """
-        if not isinstance(ax.projection, ccrs.Projection):
-            raise TypeError("ax.projection must be of type ccrs.Projection "
-                            "({})".format(type(ax.projection)))
+        try:
+            if not isinstance(ax.projection, cartopy.crs.Projection):
+                raise TypeError("ax.projection must be type"
+                                "cartopy.crs.Projection "
+                                "({})".format(type(ax.projection)))
+        except AttributeError:
+            raise TypeError("ax must be set up with cartopy.crs.Projection")
 
         # Compute the kernel density estimate on an equiangular grid
         ra = numpy.linspace(-180, 180, self.density)
@@ -118,12 +122,12 @@ class SphericalKDE(object):
 
         # Plot the countours on a suitable equiangular projection
         ax.contourf(X, Y, P, levels=levels, colors=self._colours(colour),
-                    transform=ccrs.PlateCarree())
+                    transform=cartopy.crs.PlateCarree())
 
     def plot_decra_samples(self, ax, color='k', nsamples=None):
         """ Plot equally weighted samples on an axis. """
         ra, dec = self._decra_samples(nsamples)
-        ax.plot(ra, dec, 'k.', transform=ccrs.PlateCarree())
+        ax.plot(ra, dec, 'k.', transform=cartopy.crs.PlateCarree())
 
     def _decra_samples(self, nsamples=None):
         weights = self.weights / self.weights.max()

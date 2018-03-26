@@ -97,6 +97,9 @@ def test_rotation_matrix():
         assert_allclose(M.dot(n1), n2)
         assert_allclose(M.T.dot(n2), n1)
 
+    M = utils.rotation_matrix(n1, n1)
+    assert_allclose(M, numpy.identity(3))
+
 
 def test_spherical_integrate():
     ans = utils.spherical_integrate(lambda theta, phi: 1)

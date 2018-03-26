@@ -1,7 +1,7 @@
 import numpy
 from spherical_kde import SphericalKDE
 import matplotlib.pyplot as plt
-import cartopy.crs as ccrs
+import cartopy.crs
 from matplotlib.gridspec import GridSpec, GridSpecFromSubplotSpec
 
 # Choose a seed for deterministic plot
@@ -12,10 +12,10 @@ fig = plt.figure(figsize=(10, 10))
 gs_vert = GridSpec(3, 1)
 gs_lower = GridSpecFromSubplotSpec(1, 2, subplot_spec=gs_vert[1])
 
-fig.add_subplot(gs_vert[0], projection=ccrs.Mollweide())
-fig.add_subplot(gs_lower[0], projection=ccrs.Orthographic())
-fig.add_subplot(gs_lower[1], projection=ccrs.Orthographic(-10, 45))
-fig.add_subplot(gs_vert[2], projection=ccrs.PlateCarree())
+fig.add_subplot(gs_vert[0], projection=cartopy.crs.Mollweide())
+fig.add_subplot(gs_lower[0], projection=cartopy.crs.Orthographic())
+fig.add_subplot(gs_lower[1], projection=cartopy.crs.Orthographic(-10, 45))
+fig.add_subplot(gs_vert[2], projection=cartopy.crs.PlateCarree())
 
 # Choose parameters for samples
 nsamples = 100
