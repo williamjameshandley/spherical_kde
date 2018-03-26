@@ -1,5 +1,6 @@
 Cartopy
-scipy
+pytest
 numpy
+scipy
 matplotlib
 pypandoc
