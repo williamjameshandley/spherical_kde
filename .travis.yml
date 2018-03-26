@@ -20,5 +20,7 @@ install:
     - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION cartopy pytest numpy scipy matplotlib pypandoc
     - source activate test-environment
     - python setup.py install
-script: pytest
-after_sucess: codecov
+script: 
+    - pytest
+after_success: 
+    - codecov
