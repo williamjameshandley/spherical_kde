@@ -20,6 +20,7 @@ def cartesian_from_polar(phi, theta):
     z = numpy.cos(theta)
     return numpy.array([x, y, z])
 
+
 def polar_from_cartesian(x):
     """ Embedded 3D unit vector from spherical polar coordinates.
 
@@ -89,4 +90,6 @@ def logsinh(x):
     Returns:
         log(sinh(x)) (float or numpy.array)
     """
+    if numpy.any(x < 0):
+        raise ValueError("logsinh only valid for positive arguments")
     return x + numpy.log(1-numpy.exp(-2*x)) - numpy.log(2)
