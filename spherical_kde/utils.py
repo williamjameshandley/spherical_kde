@@ -1,4 +1,5 @@
 import numpy
+from scipy.integrate import dblquad
 
 
 def cartesian_from_polar(phi, theta):
@@ -115,3 +116,12 @@ def rotation_matrix(a, b):
     vx2 = numpy.matmul(vx,vx)
     R = I + vx + vx2 * (1-c)/s**2
     return R
+
+
+def spherical_integrate(f):
+    """ Integrate an area density function over the sphere """
+    ans, _ = dblquad(lambda phi, theta: f(phi, theta)*numpy.sin(theta),
+                     0, numpy.pi, lambda x: 0, lambda x: 2*numpy.pi)
+    return ans
+
+

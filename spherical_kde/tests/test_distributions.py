@@ -1,8 +1,8 @@
 import numpy
 from numpy.testing import assert_allclose
-from scipy.integrate import dblquad
 import spherical_kde.distributions as dxns
-from spherical_kde.utils import cartesian_from_polar, polar_from_cartesian
+from spherical_kde.utils import (cartesian_from_polar, polar_from_cartesian,
+                                 spherical_integrate)
 
 
 def random_VonMisesFisher_distribution():
@@ -14,12 +14,6 @@ def random_VonMisesFisher_distribution():
         return numpy.exp(dxns.VonMisesFisher_distribution(phi, theta,
                                                           phi0, theta0, sigma))
     return f, phi0, theta0, sigma
-
-
-def spherical_integrate(f):
-    ans, _ = dblquad(lambda phi, theta: f(phi, theta)*numpy.sin(theta),
-                     0, numpy.pi, lambda x: 0, lambda x: 2*numpy.pi)
-    return ans
 
 
 def test_VonMisesFisher_distribution_normalisation():
