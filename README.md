@@ -2,6 +2,7 @@
 [![codecov](https://codecov.io/gh/williamjameshandley/spherical_kde/branch/master/graph/badge.svg)](https://codecov.io/gh/williamjameshandley/spherical_kde)
 [![PyPI version](https://badge.fury.io/py/spherical_kde.svg)](https://badge.fury.io/py/spherical_kde)
 [![Documentation Status](https://readthedocs.org/projects/spherical-kde/badge/?version=latest)](http://spherical-kde.readthedocs.io/en/latest/?badge=latest)
+[![DOI](https://zenodo.org/badge/126525378.svg)](https://zenodo.org/badge/latestdoi/126525378)
 
 
 
