@@ -68,7 +68,7 @@ class SphericalKDE(object):
                              "shape as weights ({}!={})".format(
                                  len(self.phi), len(self.weights)))
 
-        sigmahat = VonMises_std(self.theta, self.phi)
+        sigmahat = VonMises_std(self.phi, self.theta)
         self.suggested_bandwidth = 1.06*sigmahat*len(weights)**-0.2
 
     def __call__(self, phi, theta):
